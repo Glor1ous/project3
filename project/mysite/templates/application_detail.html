@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}Заявка #{{ application.id }} - Учебные курсы{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-file-text"></i> Заявка #{{ application.id }}</h4>
+                    <div class="float-end">
+                        {% if application.status == 'new' %}
+                            <span class="badge bg-info fs-6">{{ application.get_status_display }}</span>
+                        {% elif application.status == 'in_review' %}
+                            <span class="badge bg-warning fs-6">{{ application.get_status_display }}</span>
+                        {% elif application.status == 'approved' %}
+                            <span class="badge bg-success fs-6">{{ application.get_status_display }}</span>
+                        {% elif application.status == 'rejected' %}
+                            <span class="badge bg-danger fs-6">{{ application.get_status_display }}</span>
+                        {% elif application.status == 'cancelled' %}
+                            <span class="badge bg-secondary fs-6">{{ application.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            {% if application.course.image %}
+                                <img src="{{ application.course.image.url }}" class="img-fluid rounded" alt="{{ application.course.title }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <i class="bi bi-mortarboard text-muted" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <h5 class="card-title">
+                                <a href="{% url 'course_detail' application.course.id %}" class="text-decoration-none">
+                                    {{ application.course.title }}
+                                </a>
+                            </h5>
+                            <p class="text-muted">{{ application.course.short_description }}</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-tag"></i> Категория: <strong>{{ application.course.get_category_display }}</strong>
+                                    </small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i> Длительность: <strong>{{ application.course.duration }} часов</strong>
+                                    </small>
+                                </div>
+                            </div>
+                            {% if application.course.price %}
+                                <div class="mt-2">
+                                    <span class="text-primary h6">
+                                        <i class="bi bi-currency-dollar"></i> {{ application.course.price }} ₽
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Информация о заявке</h6>
+                            
+                            <div class="mb-3">
+                                <i class="bi bi-calendar-event text-primary"></i>
+                                <strong>Дата подачи:</strong>
+                                <br>
+                                <span class="ms-3">{{ application.created_at|date:"d.m.Y в H:i" }}</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <i class="bi bi-calendar-check text-primary"></i>
+                                <strong>Желаемая дата начала:</strong>
+                                <br>
+                                <span class="ms-3">{{ application.preferred_start_date|date:"d.m.Y" }}</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <i class="bi bi-credit-card text-primary"></i>
+                                <strong>Способ оплаты:</strong>
+                                <br>
+                                <span class="ms-3">{{ application.get_payment_method_display }}</span>
+                            </div>
+
+                            {% if application.updated_at != application.created_at %}
+                                <div class="mb-3">
+                                    <i class="bi bi-pencil text-primary"></i>
+                                    <strong>Последнее обновление:</strong>
+                                    <br>
+                                    <span class="ms-3">{{ application.updated_at|date:"d.m.Y в H:i" }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Статус заявки</h6>
+                            
+                            <div class="mb-3">
+                                <i class="bi bi-info-circle text-primary"></i>
+                                <strong>Текущий статус:</strong>
+                                <br>
+                                <span class="ms-3">
+                                    {% if application.status == 'new' %}
+                                        <span class="badge bg-info">{{ application.get_status_display }}</span>
+                                        <small class="text-muted d-block mt-1">Ваша заявка получена и ожидает рассмотрения</small>
+                                    {% elif application.status == 'in_review' %}
+                                        <span class="badge bg-warning">{{ application.get_status_display }}</span>
+                                        <small class="text-muted d-block mt-1">Заявка рассматривается нашими специалистами</small>
+                                    {% elif application.status == 'approved' %}
+                                        <span class="badge bg-success">{{ application.get_status_display }}</span>
+                                        <small class="text-success d-block mt-1">Поздравляем! Ваша заявка одобрена</small>
+                                    {% elif application.status == 'rejected' %}
+                                        <span class="badge bg-danger">{{ application.get_status_display }}</span>
+                                        <small class="text-danger d-block mt-1">К сожалению, заявка была отклонена</small>
+                                    {% elif application.status == 'cancelled' %}
+                                        <span class="badge bg-secondary">{{ application.get_status_display }}</span>
+                                        <small class="text-muted d-block mt-1">Заявка была отменена</small>
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            {% if application.notes %}
+                                <div class="mb-3">
+                                    <i class="bi bi-chat-left-text text-primary"></i>
+                                    <strong>Примечания:</strong>
+                                    <br>
+                                    <div class="ms-3 p-2 bg-light rounded">
+                                        {{ application.notes|linebreaks }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                    <hr>
+                    <div class="text-center">
+                        {% if application.status == 'new' %}
+                            <a href="{% url 'cancel_application' application.id %}" 
+                               class="btn btn-outline-danger me-2"
+                               onclick="return confirm('Вы уверены, что хотите отменить заявку? Это действие нельзя будет отменить.')">
+                                <i class="bi bi-x-circle"></i> Отменить заявку
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'course_detail' application.course.id %}" class="btn btn-outline-primary me-2">
+                            <i class="bi bi-eye"></i> Посмотреть курс
+                        </a>
+                        
+                        <a href="{% url 'profile' %}" class="btn btn-primary">
+                            <i class="bi bi-person-circle"></i> Вернуться в профиль
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="bi bi-info-circle"></i> Полезная информация</h6>
+                </div>
+                <div class="card-body">
+                    {% if application.status == 'new' %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-clock"></i>
+                            <strong>Время рассмотрения:</strong>
+                            <br>
+                            <small>Обычно заявки рассматриваются в течение 1-2 рабочих дней.</small>
+                        </div>
+                    {% elif application.status == 'approved' %}
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i>
+                            <strong>Что дальше?</strong>
+                            <br>
+                            <small>Наш менеджер свяжется с вами в ближайшее время для уточнения деталей и организации обучения.</small>
+                        </div>
+                    {% elif application.status == 'rejected' %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Не расстраивайтесь!</strong>
+                            <br>
+                            <small>Вы можете подать заявку на другие курсы или свяжитесь с нами для получения дополнительной информации.</small>
+                        </div>
+                    {% endif %}
+
+                    <hr>
+                    
+                    <h6>Контактная информация:</h6>
+                    <p class="small text-muted mb-2">
+                        <i class="bi bi-envelope"></i> info@courses.ru
+                    </p>
+                    <p class="small text-muted mb-2">
+                        <i class="bi bi-telephone"></i> +7 (123) 456-78-90
+                    </p>
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-clock"></i> Пн-Пт: 9:00-18:00
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6><i class="bi bi-list"></i> Навигация</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'profile' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-person-circle"></i> Мой профиль
+                        </a>
+                        <a href="{% url 'courses' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-book"></i> Все курсы
+                        </a>
+                        <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-envelope"></i> Связаться с нами
+                        </a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-house"></i> На главную
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

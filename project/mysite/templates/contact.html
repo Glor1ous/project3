@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Контакты - Учебные курсы{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="text-center mb-5">Контакты</h1>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-envelope-fill text-primary"></i> Свяжитесь с нами
+                            </h5>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {{ form.name.label_tag }}
+                                    {{ form.name }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.email.label_tag }}
+                                    {{ form.email }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.phone.label_tag }}
+                                    {{ form.phone }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.message.label_tag }}
+                                    {{ form.message }}
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send"></i> Отправить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-info-circle-fill text-primary"></i> Наши контакты
+                            </h5>
+
+                            <div class="contact-info">
+                                <div class="mb-3">
+                                    <i class="bi bi-geo-alt-fill text-primary"></i>
+                                    <strong>Адрес:</strong><br>
+                                    г. Москва, ул. Примерная, д. 123
+                                </div>
+
+                                <div class="mb-3">
+                                    <i class="bi bi-telephone-fill text-primary"></i>
+                                    <strong>Телефон:</strong><br>
+                                    +7 (800) 123-45-67
+                                </div>
+
+                                <div class="mb-3">
+                                    <i class="bi bi-envelope-fill text-primary"></i>
+                                    <strong>Email:</strong><br>
+                                    info@courses.ru
+                                </div>
+
+                                <div class="mb-3">
+                                    <i class="bi bi-clock-fill text-primary"></i>
+                                    <strong>Время работы:</strong><br>
+                                    Пн-Пт: 9:00 - 18:00<br>
+                                    Сб-Вс: 10:00 - 16:00
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - Учебные курсы{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 400px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="bi bi-mortarboard text-muted" style="font-size: 6rem;"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title">{{ course.title }}</h1>
+                    <div class="mb-3">
+                        <span class="badge bg-secondary">{{ course.get_category_display }}</span>
+                    </div>
+                    <p class="card-text text-muted">{{ course.short_description }}</p>
+                    <hr>
+                    <p class="card-text">{{ course.description|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Информация о курсе</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="bi bi-currency-dollar text-primary"></i>
+                        <strong>Стоимость:</strong> {{ course.price }} ₽
+                    </div>
+
+                    <div class="mb-3">
+                        <i class="bi bi-clock text-primary"></i>
+                        <strong>Продолжительность:</strong> {{ course.duration }} часов
+                    </div>
+
+                    <div class="mb-3">
+                        <i class="bi bi-tag text-primary"></i>
+                        <strong>Категория:</strong> {{ course.get_category_display }}
+                    </div>
+
+                    <div class="mb-3">
+                        <i class="bi bi-calendar text-primary"></i>
+                        <strong>Создан:</strong> {{ course.created_at|date:"d.m.Y" }}
+                    </div>
+
+                    <hr>
+
+                    {% if user.is_authenticated %}
+                        {% if user_application %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                Вы уже подали заявку на этот курс
+                                <br>
+                                <small>
+                                    Статус: <strong>{{ user_application.get_status_display }}</strong>
+                                </small>
+                                <br>
+                                <small>
+                                    Дата подачи: {{ user_application.created_at|date:"d.m.Y H:i" }}
+                                </small>
+                            </div>
+                            <a href="{% url 'application_detail' user_application.id %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-eye"></i> Посмотреть заявку
+                            </a>
+                        {% else %}
+                            <a href="{% url 'apply_for_course' course.id %}" class="btn btn-primary w-100 mb-2">
+                                <i class="bi bi-plus-circle"></i> Подать заявку
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Для подачи заявки необходимо войти в систему
+                        </div>
+                        <a href="{% url 'login' %}" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-person-plus"></i> Регистрация
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
